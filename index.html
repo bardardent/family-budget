@@ -215,10 +215,10 @@
         ✅ 共 <strong>65 筆記錄</strong>（原始 xlsx 53 筆 ＋ 信用卡帳單新增 12 筆）。重複檢查：<strong style="color:#f0c987">無重複</strong>。
       </div>
       <div class="summary-row">
-        <div class="sum-card income" data-icon="💰"><div class="sum-label">本月收入</div><div class="sum-amount" id="tot-income">$0</div></div>
-        <div class="sum-card expense" data-icon="🧾"><div class="sum-label">本月支出</div><div class="sum-amount" id="tot-expense">$0</div></div>
-        <div class="sum-card balance" data-icon="📈"><div class="sum-label">本月結餘</div><div class="sum-amount" id="tot-balance">$0</div></div>
-        <div class="sum-card count" data-icon="🔢"><div class="sum-label">記錄筆數</div><div class="sum-amount" id="tot-count">0</div></div>
+        <div class="sum-card income" data-icon="💰"><div class="sum-label" id="lbl-income">收入</div><div class="sum-amount" id="tot-income">$0</div></div>
+        <div class="sum-card expense" data-icon="🧾"><div class="sum-label" id="lbl-expense">支出</div><div class="sum-amount" id="tot-expense">$0</div></div>
+        <div class="sum-card balance" data-icon="📈"><div class="sum-label" id="lbl-balance">結餘</div><div class="sum-amount" id="tot-balance">$0</div></div>
+        <div class="sum-card count" data-icon="🔢"><div class="sum-label" id="lbl-count">記錄筆數</div><div class="sum-amount" id="tot-count">0</div></div>
       </div>
 
       <div class="card">
@@ -418,6 +418,23 @@ function deleteRecord(id) {
 
 function renderRecords() {
   const data = getFiltered();
+  const m = document.getElementById('filter-month').value;
+  const c = document.getElementById('filter-cat').value;
+
+  // 動態更新 summary 標題
+  let periodLabel = '';
+  if (m === 'all') {
+    periodLabel = '全部';
+  } else {
+    const [y, mo] = m.split('-');
+    periodLabel = parseInt(y) + ' 年 ' + parseInt(mo) + ' 月';
+  }
+  const catLabel = c === 'all' ? '' : `・${c}`;
+  document.getElementById('lbl-income').textContent  = periodLabel + catLabel + '　收入';
+  document.getElementById('lbl-expense').textContent = periodLabel + catLabel + '　支出';
+  document.getElementById('lbl-balance').textContent = periodLabel + catLabel + '　結餘';
+  document.getElementById('lbl-count').textContent   = periodLabel + catLabel + '　筆數';
+
   const income  = data.filter(r=>r.type==='income').reduce((s,r)=>s+r.amt,0);
   const expense = data.filter(r=>r.type==='expense').reduce((s,r)=>s+r.amt,0);
   const balance = income - expense;
